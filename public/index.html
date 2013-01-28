@@ -54,7 +54,9 @@ JSON versus JSONP Tutorial
 <p>But the practical  implementation of the approach involves subtle differences that are often not explained clearly. </p>
 <p>Here is a simple tutorial that shows JSON and JSONP side by side.</p>
 
-<p>All the code is freely available at <a href="https://github.com/craic/json_jsonp_tutorial">Github</a>.</p>
+<p>All the code is freely available at <a href="https://github.com/craic/json_jsonp_tutorial">Github</a> and a live version
+can be found at <a href="http://json-jsonp-tutorial.craic.com/">http://json-jsonp-tutorial.craic.com</a></p>
+
 <p>&nbsp;</p>
 
 <p>
@@ -94,8 +96,10 @@ The <a href="http://en.wikipedia.org/wiki/Same_origin_policy">Same Origin Policy
 You should be familiar with Ruby, Gems and basic Sinatra apps, if you want to run a live demo.
 </p>
 <p>
-You can run it locally with the commands 'bundle install' and 'rackup -p 4567' and then going to 'http://localhost:4567' with your browser. To really demonstrate
-the cross domain operation you should put the server code on a remote server.
+You can run it locally with the commands 'bundle install' and 'rackup -p 4567' and then going to 'http://localhost:4567' with your browser. </p>
+
+<p>NOTE: To really demonstrate the cross domain operation you need to put the client and server code on TWO DIFFERENT machines.
+  Run this page on your localhost and change the 'host' in the JS to point to 'http://json-jsonp-tutorial.craic.com'.
 </p>
 
 <p>The examples make use of the <a href="https://github.com/douglascrockford/JSON-js/blob/master/json2.js">JSON.stringify</a> method

@@ -12,3 +12,5 @@ It assumes that you are familiar with basic JQuery functions and have basic expe
 Specifically the tutorial uses a simple Sinatra server, written in Ruby
 
 See the page public/index.html for the Tutorial itself.
+
+A live version of the tutorial is at http://json-jsonp-tutorial.craic.com

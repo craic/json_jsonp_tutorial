@@ -16,6 +16,10 @@ class JsonJsonpApp < Sinatra::Base
 
   set :static, true
 
+  get '/' do
+    redirect to('index.html')
+  end
+
   get '/json' do
     content_type :json
     # This content is whatever you want to send as long as it can be converted into JSON
