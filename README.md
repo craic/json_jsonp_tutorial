@@ -1,4 +1,4 @@
-Practical Tutorial on JSON versus JSONP in JQuery
+### Practical Tutorial on JSON versus JSONP in JQuery
 
 JSONP is a simple way to overcome browser restrictions when sending JSON responses from different domains from the client.
 
