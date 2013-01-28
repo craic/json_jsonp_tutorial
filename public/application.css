@@ -1,0 +1,56 @@
+
+
+body {
+  font-family: "Lucida Grande", Verdana, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  margin: auto;
+  width: 90%;
+}
+
+#header {
+  margin: auto;
+  padding-top: 10px;
+  padding-bottom: 20px;
+  color: #cf6700;
+  font-size: 24px;
+}
+
+#footer {
+  margin: auto;
+  padding-top: 80px;
+}
+#footer table {
+  width: 100%;
+  color: #aaa;
+  font-size: 12px;
+  vertical-align: middle;
+
+}
+#footer a {
+  text-decoration: none;
+  color: #aaa;
+  font-size: 12px;
+}
+.td-left {
+  text-align: left;
+  padding: 5px 10px 5px 10px;
+}
+.td-right {
+  text-align: right;
+  padding: 5px 10px 5px 10px;
+}
+.td-logo {
+  width: 20px;
+}
+
+.shape-button-selected {
+  background-color: #bbb;
+}
+
+.color-button-selected {
+  background-color: #bbb;
+}
+
+.highlight {
+  color: red;
+}

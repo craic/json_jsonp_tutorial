@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link type="text/css" href="application.css" rel="stylesheet" />
+	<title>JSON versus JSONP Tutorial</title>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script type="text/javascript" src="json2.js"></script>
+
+<script type="text/javascript">
+
+var host_prefix = 'http://localhost:4567';
+
+$(document).ready(function() {
+
+  // JSON version - fetch the JSON response to the request
+    $("#json-button").click(function(e) {
+      e.preventDefault();
+
+      var url = host_prefix + '/json';
+
+      $.getJSON(url, function(json){
+        console.log(json);
+         $("#json-response").html(JSON.stringify(json, null, 2));
+      });
+    });
+
+  // JSONP version - add 'callback=?' to the URL - fetch the JSONP response to the request
+    $("#jsonp-button").click(function(e) {
+      e.preventDefault();
+
+      // The only difference on the client end is the addition of 'callback=?' to the URL
+      var url = host_prefix + '/jsonp?callback=?';
+
+      $.getJSON(url, function(jsonp){
+        console.log(jsonp);
+        $("#jsonp-response").html(JSON.stringify(jsonp, null, 2));
+      });
+    });
+
+});
+</script>
+
+</head>
+
+<body>
+
+<div id='header'>
+JSON versus JSONP Tutorial
+</div>
+
+<p>JSONP is a simple way to overcome browser restrictions when sending JSON responses from different domains from the client. </p>
+<p>But the practical  implementation of the approach involves subtle differences that are often not explained clearly. </p>
+<p>Here is a simple tutorial that shows JSON and JSONP side by side.</p>
+
+<p>&nbsp;</p>
+
+<p>
+<a href='http://en.wikipedia.org/wiki/JSON'>JSON (Javascript Object Notation)</a> is a convenient way to transport data between applications, especially when the destination is a Javascript application.
+</p>
+<p>
+<a href="http://jquery.com/">JQuery</a> has functions that make Ajax/HTTPD calls from a script to a server very easy and
+<a href="http://api.jquery.com/jQuery.getJSON/">$.getJSON()</a> is a great shorthand function for fetching a
+server response in JSON.
+</p>
+
+
+<p>
+But this simple approach fails if the page making the ajax call is in a different domain from the server.
+The <a href="http://en.wikipedia.org/wiki/Same_origin_policy">Same Origin Policy</a> prohibits these cross-domain calls in some browsers as a security measure.</p>
+
+
+<p>At the time of writing, Google Chrome version 24 and Mozilla Firefox version 17 do not appear to apply this restriction but Internet Explorer version 9 does.</p>
+
+<p>The security implications of allowing cross domain requests should be considered carefully in your application but if you do want to allow them then you
+  need a way to overcome the browser restrictions.</p>
+
+<p><a href="http://en.wikipedia.org/wiki/JSONP">JSONP (JSON with Padding)</a> makes this possible in all browsers.</p>
+
+
+<p>JSONP wraps up a JSON response into a JavaScript function and sends that back as a Script to the browser.
+  A script is not subject to the Same Origin Policy and when loaded into the client, the function acts just like the JSON object that it contains.
+</p>
+
+
+<p>&nbsp;</p>
+
+<p>This page shows the two approaches with snippets of Server and Client code. Look at the source of this page to see the full JS code.</p>
+
+
+<p>The code consists of a Server application, implemented here as a Ruby <a href="http://www.sinatrarb.com/">Sinatra</a> application.
+You should be familiar with Ruby, Gems and basic Sinatra apps, if you want to run a live demo.
+</p>
+<p>
+You can run it locally with the commands 'bundle install' and 'rackup -p 4567' and then going to 'http://localhost:4567' with your browser. To really demonstrate
+the cross domain operation you should put the server code on a remote server.
+</p>
+
+<p>The examples make use of the <a href="https://github.com/douglascrockford/JSON-js/blob/master/json2.js">JSON.stringify</a> method
+  from Douglas Crockford to 'pretty print' the returned JSON.
+  You can find that <a href="https://github.com/douglascrockford/JSON-js/blob/master/json2.js">HERE</a>. </p>
+
+<hr>
+
+<h2>JSON</h2>
+<p>
+  Here is a minimal example that uses JSON as the transport for the server response.
+  The client makes an ajax request with the JQuery shorthand function $.getJSON.
+  The server generates a hash, formats it as JSON and returns this to the client.
+  The client formats this and puts it in a page element.
+</p>
+
+<p>
+Server:
+<pre>
+  get '/json' do
+    content_type :json
+    content = { :response  => 'Sent via JSON',
+                :timestamp => Time.now,
+                :random    => rand(10000) }
+    content.to_json
+  end
+</pre>
+</p>
+
+<p>
+Client:
+<pre>
+  var url = host_prefix + '/json';
+  $.getJSON(url, function(json){
+    $("#json-response").html(JSON.stringify(json, null, 2));
+  });
+</pre>
+
+<input type="button" id="json-button" value="Get JSON response">
+
+<pre id='json-response'></pre>
+
+</p>
+
+
+<hr>
+
+<h2>JSONP</h2>
+<p>
+The only change on the Client side with JSONP is to add a callback parameter to the URL. The simplest way to do this is to add 'callback=?' in which case
+jQuery will generate a unique function name and pass that to the server (e.g. jQuery19009536794223822653_1359406689359).
+</p>
+<p>On the Server you need to get the 'callback' parameter and, instead of returning the raw JSON, you wrap that string in a function
+  definition, like this "<your_callback>(<your_json>)". You don't need to know the function name in advance - you just get it from that
+  callback parameter.</p>
+
+<p>You should also set the content type to 'application/javascript', although this doesn't appear to matter in my tests.</p>
+<p>Back on the client side you treat the returned function just like the raw JSON object.</p>
+
+<p>
+Server:
+<pre>
+  get '/jsonp' do
+    <span class="highlight">callback = params['callback']</span>
+    <span class="highlight">content_type :js</span>
+    content = { :response  => 'Sent via JSONP',
+                :timestamp => Time.now,
+                :random    => rand(10000) }
+    <span class="highlight">"#{callback}(#{content.to_json})"</span>
+  end
+</pre>
+</p>
+
+<p>
+Client:
+<pre>
+  var url = host_prefix + <span class="highlight">'/jsonp?callback=?';</span>
+  $.getJSON(url, function(jsonp){
+    $("#jsonp-response").html(JSON.stringify(jsonp, null, 2));
+  });
+</pre>
+
+<input type="button" id="jsonp-button" value="Get JSONP response">
+
+<pre id='jsonp-response'></pre>
+
+
+
+</p>
+
+<div id='footer'>
+<table><tbody>
+<tr>
+<td class='td-logo'><a href='http://www.craic.com'><img src='craic_logo_20.jpg'></a> </td>
+<td class='td-left'><a href="http://www.craic.com">A project from <span style="color: black">Craic Computing</span></a></td>
+<td class='td-right'><span style="color: black">Copyright &copy; 2013 Robert Jones, Craic Computing LLC</span>
+  (Distributed under the terms of the <a href="http://opensource.org/licenses/MIT">MIT License</a>)</td>
+</tr>
+</tbody></table>
+</div>
+
+</body>
+</html>
